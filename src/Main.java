@@ -8,5 +8,6 @@ public class Main {
         LoginFrame.pack();
         LoginFrame.setLocationRelativeTo(null);
         //jhjh
+        //hjj
     }
 }
