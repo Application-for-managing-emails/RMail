@@ -1,6 +1,5 @@
 package login_signup;
 
-
 import Client.Dashboard;
 
 import javax.swing.*;
@@ -139,19 +138,24 @@ public class Login extends javax.swing.JFrame {
                     ResultSet rs = stmt.executeQuery(query);
                     if (rs.next()) {
                         JOptionPane.showMessageDialog(null, "Login Successful");
-                        Dashboard dashboard = new Dashboard();
-                        MailComposer Composer = new MailComposer();
-                        Composer.setVisible(true);
-                        Composer.pack();
-                        Composer.setLocationRelativeTo(null);
+                        // Open the compose page
+                        MailComposer composer = new MailComposer();
+                        composer.setPreferredSize(new Dimension(800, 600)); // Set the desired size
+                        composer.pack();
+                        composer.setVisible(true);
+                        composer.setLocationRelativeTo(null);
+                        // Dispose of the current login frame
+                        dispose();
                     } else {
                         JOptionPane.showMessageDialog(null, "Invalid Email or Password");
                     }
                 } catch (Exception e) {
                     System.out.println(e);
                 }
-
             }
+
+
+        
         });
 
         jLabel4.setText("I don't have an account");
@@ -265,34 +269,4 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JTextField jEmailText;
     // End of variables declaration//GEN-END:variables
-
-private void jLogInBtnActionPerformed(ActionEvent evt) {
-    String email = jEmailText.getText();
-    String password = String.valueOf(jPasswordField1.getPassword());
-    String SUrl, SUser, SPass;
-    SUrl = "jdbc:mysql://localhost:3306/rmail";
-    SUser = "root";
-    SPass = "";
-
-    try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection con = DriverManager.getConnection(SUrl, SUser, SPass);
-        Statement stmt = con.createStatement();
-        String query = "SELECT * FROM users WHERE email = '" + email + "' AND password = '" + password + "'";
-        ResultSet rs = stmt.executeQuery(query);
-        if (rs.next()) {
-            JOptionPane.showMessageDialog(null, "Login Successful");
-            // Open the compose page
-            MailComposer composer = new MailComposer();
-            composer.setVisible(true);
-            composer.setLocationRelativeTo(null);
-            // Dispose of the current login frame
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(null, "Invalid Email or Password");
-        }
-    } catch (Exception e) {
-        System.out.println(e);
-    }
-}
 }
