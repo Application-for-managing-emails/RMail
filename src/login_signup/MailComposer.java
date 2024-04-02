@@ -4,19 +4,30 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
 
 public class MailComposer extends JFrame {
     private JTextField recipientField;
     private JTextField subjectField;
     private JTextArea messageArea;
+    
+    private BlockingQueue<Message> messageQueue;
+    private User currentUser;
 
-    public MailComposer() {
+    public MailComposer(User currentUser) {
+    	this.currentUser = currentUser;
         setTitle("Compose Mail");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
-        setSize(800, 600); 
+        setSize(1000, 800);
         setVisible(true);
+        messageQueue = new LinkedBlockingQueue<>();
+        startInboxListener();
     }
+    
 
     private void initComponents() {
         setBackground(new Color(255, 255, 255));
@@ -33,21 +44,21 @@ public class MailComposer extends JFrame {
         JPanel composePanel = new JPanel(new BorderLayout());
         composePanel.setBackground(new Color(255, 255, 255));
 
-       
+
         JPanel topicPanel = new JPanel();
-        topicPanel.setBackground(new Color(255, 87, 51)); 
+        topicPanel.setBackground(new Color(255, 87, 51));
         JLabel topicLabel = new JLabel("New Mail");
-        topicLabel.setForeground(Color.WHITE); 
+        topicLabel.setForeground(Color.WHITE);
         topicPanel.add(topicLabel);
 
-        
+
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBackground(new Color(255, 255, 255));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(5, 5, 5, 5); 
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         JLabel recipientLabel = new JLabel("Recipient:");
         inputPanel.add(recipientLabel, gbc);
@@ -62,8 +73,8 @@ public class MailComposer extends JFrame {
 
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.gridwidth = 2; 
-        gbc.fill = GridBagConstraints.HORIZONTAL; 
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         recipientField = new JTextField();
         recipientField.setPreferredSize(new Dimension(200, 20));
@@ -75,11 +86,11 @@ public class MailComposer extends JFrame {
         inputPanel.add(subjectField, gbc);
 
         gbc.gridy++;
-        gbc.weighty = 1.0; 
+        gbc.weighty = 1.0;
         messageArea = new JTextArea();
-        messageArea.setLineWrap(true); 
+        messageArea.setLineWrap(true);
         JScrollPane scrollPane = new JScrollPane(messageArea);
-        scrollPane.setPreferredSize(new Dimension(400, 200)); 
+        scrollPane.setPreferredSize(new Dimension(400, 200));
         inputPanel.add(scrollPane, gbc);
 
         JButton sendButton = new JButton("Send");
@@ -96,7 +107,7 @@ public class MailComposer extends JFrame {
             }
         });
 
-        
+
         composePanel.add(topicPanel, BorderLayout.NORTH);
         composePanel.add(inputPanel, BorderLayout.CENTER);
         composePanel.add(sendButton, BorderLayout.SOUTH);
@@ -107,28 +118,99 @@ public class MailComposer extends JFrame {
         add(splitPane);
     }
 
-
     private void sendMail() {
         String recipient = recipientField.getText();
         String subject = subjectField.getText();
         String message = messageArea.getText();
 
-        System.out.println("Recipient: " + recipient);
-        System.out.println("Subject: " + subject);
-        System.out.println("Message: " + message);
+        if (currentUser != null) {
+            Message newMessage = new Message(currentUser, recipient, subject, message);
+            try {
+                messageQueue.put(newMessage);
+                System.out.println("Message sent successfully.");
+            } catch (InterruptedException e) {
+                System.out.println("Failed to send message.");
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("No user logged in.");
+        }
 
         recipientField.setText("");
         subjectField.setText("");
         messageArea.setText("");
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
+    private void startInboxListener() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                new MailComposer();
+                while (true) {
+                    try {
+                        Message message = messageQueue.take();
+                        if (currentUser.equals(message.getRecipient())) {
+                            // Add message to the inbox
+                            // Example: receivedMailsPanel.add(new JLabel(message.getSubject()));
+                            System.out.println("New message received: " + message.getSubject());
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        });
+        }).start();
     }
+
+    // Assuming you have a class User and a class Message defined elsewhere
+    // You need to implement these classes according to your requirements
+    static class User {
+        private String username;
+        // Other user properties
+
+        public User(String username) {
+            this.username = username;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+    }
+
+    private static class Message {
+        private User sender;
+        private String recipient;
+        private String subject;
+        private String body;
+
+        public Message(User sender, String recipient, String subject, String body) {
+            this.sender = sender;
+            this.recipient = recipient;
+            this.subject = subject;
+            this.body = body;
+        }
+
+        public User getSender() {
+            return sender;
+        }
+
+        public String getRecipient() {
+            return recipient;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public String getBody() {
+            return body;
+        }
+    }
+   
+
+
+	
+
+    
+
+    
 }
-//

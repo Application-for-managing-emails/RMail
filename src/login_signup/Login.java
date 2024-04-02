@@ -1,6 +1,7 @@
 package login_signup;
 
 import Client.Dashboard;
+import login_signup.MailComposer.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class Login extends javax.swing.JFrame {
+public class Login extends javax.swing. JFrame {
 
     public Login() {
         initComponents();
@@ -139,8 +140,9 @@ public class Login extends javax.swing.JFrame {
                     if (rs.next()) {
                         JOptionPane.showMessageDialog(null, "Login Successful");
                         // Open the compose page
-                        MailComposer composer = new MailComposer();
-                        composer.setPreferredSize(new Dimension(800, 600)); // Set the desired size
+                        User user = new User(email);
+                        MailComposer composer = new MailComposer(user);
+                        //composer.setCurrentUser(user); // Pass the User objectcomposer.setPreferredSize(new Dimension(800, 600)); // Set the desired size
                         composer.pack();
                         composer.setVisible(true);
                         composer.setLocationRelativeTo(null);
@@ -248,6 +250,13 @@ public class Login extends javax.swing.JFrame {
         SignUpFrame.setLocationRelativeTo(null);
         this.dispose();
     }//GEN-LAST:event_jSignUpActionPerformed
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Login().setVisible(true);
+            }
+        });
+    }
 
     /**
      * @param args the command line arguments
