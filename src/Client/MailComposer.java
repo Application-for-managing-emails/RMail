@@ -11,11 +11,14 @@ public class MailComposer extends JFrame {
     private JTextField subjectField;
     private JTextArea messageArea;
 
-    public MailComposer() {
+    private String senderEmaiL;
+
+    public MailComposer(String senderEmail) {
         setTitle("Compose Mail");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
+        senderEmaiL = senderEmail;
 
         initComponents();
     }
@@ -24,7 +27,9 @@ public class MailComposer extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2));
+        JLabel senderLabel = new JLabel("Sender : "+senderEmaiL);
+        JLabel senderEmailLabel = new JLabel();
         JLabel recipientLabel = new JLabel("Recipient:");
         JLabel subjectLabel = new JLabel("Subject:");
         JLabel messageLabel = new JLabel("Message:");
@@ -33,6 +38,9 @@ public class MailComposer extends JFrame {
         subjectField = new JTextField();
         messageArea = new JTextArea();
 
+
+        inputPanel.add(senderLabel);
+        inputPanel.add(senderEmailLabel);
         inputPanel.add(recipientLabel);
         inputPanel.add(recipientField);
         inputPanel.add(subjectLabel);
@@ -73,12 +81,13 @@ public class MailComposer extends JFrame {
         // dispose();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MailComposer().setVisible(true);
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            private String senderEmail = "Shavidika.ekanayake@gmail.com";
+//            @Override
+//            public void run() {
+//                new MailComposer(senderEmail).setVisible(true);
+//            }
+//        });
+//    }
 }
