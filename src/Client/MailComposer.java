@@ -1,10 +1,9 @@
-package login_signup;
+package Client;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import login_signup.MailComposer;
 
 public class MailComposer extends JFrame {
     private JTextField recipientField;
@@ -62,7 +61,7 @@ public class MailComposer extends JFrame {
         add(panel);
     }
 
-    private void sendMail() {
+    private void sendMail() throws NullPointerException {
         String recipient = recipientField.getText();
         String subject = subjectField.getText();
         String message = messageArea.getText();

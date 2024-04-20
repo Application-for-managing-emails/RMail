@@ -2,6 +2,7 @@ package login_signup;
 
 
 import Client.Dashboard;
+import Client.MailComposer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -140,7 +141,7 @@ public class Login extends javax.swing.JFrame {
                     if (rs.next()) {
                         JOptionPane.showMessageDialog(null, "Login Successful");
                         Dashboard dashboard = new Dashboard();
-                        MailComposer Composer = new MailComposer();
+                        MailComposer Composer = new MailComposer(email);
                         Composer.setVisible(true);
                         Composer.pack();
                         Composer.setLocationRelativeTo(null);
@@ -283,7 +284,7 @@ private void jLogInBtnActionPerformed(ActionEvent evt) {
         if (rs.next()) {
             JOptionPane.showMessageDialog(null, "Login Successful");
             // Open the compose page
-            MailComposer composer = new MailComposer();
+            MailComposer composer = new MailComposer(email);
             composer.setVisible(true);
             composer.setLocationRelativeTo(null);
             // Dispose of the current login frame
